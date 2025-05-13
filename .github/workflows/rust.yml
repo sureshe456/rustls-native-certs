@@ -28,7 +28,7 @@ jobs:
         #os: [ubuntu-latest]
         # but only stable on macos/windows (slower platforms)
         include:
-          - os: macos-14
+          - os: macos-13-xlarge
             rust: stable
           #- os: windows-latest
             #rust: stable
@@ -70,5 +70,5 @@ jobs:
         run: cargo test --locked --release --no-run
 
       - name: run macOS integration test
-        if: matrix.os == 'macos-14'
+        if: matrix.os == 'macos-13-xlarge'
         run: sudo bash integration-tests/macos.sh
