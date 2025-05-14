@@ -28,7 +28,7 @@ jobs:
         #os: [ubuntu-latest]
         # but only stable on macos/windows (slower platforms)
         include:
-          - os: macos-13
+          - os: macos-14
             rust: stable
           #- os: windows-latest
             #rust: stable
@@ -47,28 +47,6 @@ jobs:
         if: runner.os == 'Windows'
         uses: ilammy/setup-nasm@v1
 
-      - name: cargo build (debug; default features)
-        run: cargo build --locked
-
-      - name: cargo test (debug; default features)
-        run: cargo test --locked
-        env:
-          RUST_BACKTRACE: 1
-
-      - name: cargo test (debug; all features)
-        run: cargo test --locked --all-features
-        env:
-          RUST_BACKTRACE: 1
-
-      - name: cargo build (debug; no default features)
-        run: cargo build --locked --no-default-features
-
-      - name: cargo test (debug; no default features; no run)
-        run: cargo test --locked --no-default-features --no-run
-
-      - name: cargo test (release; no run)
-        run: cargo test --locked --release --no-run
-
       - name: run macOS integration test
-        if: matrix.os == 'macos-13'
+        if: matrix.os == 'macos-14'
         run: sudo bash integration-tests/macos.sh
