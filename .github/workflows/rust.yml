@@ -33,19 +33,19 @@ jobs:
           #- os: windows-latest
             #rust: stable
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
+      #- name: Checkout sources
+        #uses: actions/checkout@v4
+        #with:
+          #persist-credentials: false
 
-      - name: Install ${{ matrix.rust }} toolchain
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ matrix.rust }}
+      #- name: Install ${{ matrix.rust }} toolchain
+        #uses: dtolnay/rust-toolchain@master
+        #with:
+          #toolchain: ${{ matrix.rust }}
 
-      - name: Install NASM for aws-lc-rs on Windows
-        if: runner.os == 'Windows'
-        uses: ilammy/setup-nasm@v1
+      #- name: Install NASM for aws-lc-rs on Windows
+        #if: runner.os == 'Windows'
+        #uses: ilammy/setup-nasm@v1
 
       - name: run macOS integration test
         if: matrix.os == 'macos-14'
