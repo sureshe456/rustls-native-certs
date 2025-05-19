@@ -33,10 +33,10 @@ jobs:
           #- os: windows-latest
             #rust: stable
     steps:
-      #- name: Checkout sources
-        #uses: actions/checkout@v4
-        #with:
-          #persist-credentials: false
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       #- name: Install ${{ matrix.rust }} toolchain
         #uses: dtolnay/rust-toolchain@master
