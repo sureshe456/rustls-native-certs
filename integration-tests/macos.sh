@@ -34,7 +34,7 @@ test_distrust_existing_root() {
 }
 
 # https://developer.apple.com/forums/thread/671582?answerId=693632022#693632022
-security authorizationdb write com.apple.trust-settings.admin allow
+sudo security authorizationdb write com.apple.trust-settings.admin allow
 
 reset
 test_distrust_existing_root
