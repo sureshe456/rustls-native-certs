@@ -5,19 +5,11 @@ set -ex
 ANY_CA_PEM=integration-tests/one-existing-ca.pem
 ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
 
-#reset() {
-  #sudo security remove-trusted-cert -d $ANY_CA_PEM || true
-  #sudo security delete-certificate -c $ANY_CA_PEM || true
-  #list | grep "$ANY_CA_SUBJECT"
-#} 
-
 reset() {
-  # Use the certificate subject instead of file path for deletion
-  set +e
-  sudo security delete-certificate -c "$ANY_CA_SUBJECT" || true
-  set -e
+  sudo security remove-trusted-cert -d $ANY_CA_PEM || true
+  #sudo security delete-certificate -c $ANY_CA_PEM || true
   list | grep "$ANY_CA_SUBJECT"
-}
+} 
 
 list() {
   cargo test util_list_certs -- --nocapture 2>/dev/null
@@ -46,6 +38,8 @@ test_distrust_existing_root() {
 
 # https://developer.apple.com/forums/thread/671582?answerId=693632022#693632022
 sudo security authorizationdb write com.apple.trust-settings.admin allow
+
+sudo security unlock-keychain /Library/Keychains/System.keychain
 
 reset
 test_distrust_existing_root
