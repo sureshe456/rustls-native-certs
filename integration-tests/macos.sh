@@ -39,7 +39,7 @@ test_distrust_existing_root() {
 # https://developer.apple.com/forums/thread/671582?answerId=693632022#693632022
 sudo security authorizationdb write com.apple.trust-settings.admin allow
 
-sudo security unlock-keychain /Library/Keychains/System.keychain
+sudo security find-certificate -a -c "GlobalSign"
 
 reset
 test_distrust_existing_root
