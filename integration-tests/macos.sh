@@ -29,7 +29,9 @@ assert_exists() {
 
 test_distrust_existing_root() {
   assert_exists "$ANY_CA_SUBJECT"
-  sudo security add-trusted-cert -d -r deny $ANY_CA_PEM
+  #sudo security add-trusted-cert -d -r deny $ANY_CA_PEM
+  sudo security add-trusted-cert -k /Library/Keychains/System.keychain -d -r deny $ANY_CA_PEM
+
   assert_missing "$ANY_CA_SUBJECT"
   reset
 }
