@@ -6,14 +6,7 @@ ANY_CA_PEM=integration-tests/one-existing-ca.pem
 ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
 
 reset() {
-  #sudo security remove-trusted-cert -d $ANY_CA_PEM || true
-  #sudo security delete-certificate -c $ANY_CA_PEM || true
-  #Find the SHA-1 hash (more reliable for unique identification)
-  # This is often the best way to uniquely identify a certificate programmatically.
-  SHA1_HASH=$(openssl x509 -in integration-tests/one-existing-ca.pem -noout -fingerprint -sha1 | cut -d'=' -f2 | tr -d ':')
-  echo "SHA-1 Hash of the certificate: $SHA1_HASH"
-  sudo security delete-certificate -Z "$SHA1_HASH"
-  echo "Deleted SHA-1: $SHA1_HASH"
+  sudo security remove-trusted-cert -d $ANY_CA_PEM || true
   list | grep "$ANY_CA_SUBJECT"
 } 
 
