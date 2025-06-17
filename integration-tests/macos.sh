@@ -3,7 +3,7 @@
 set -ex
 
 ANY_CA_PEM=integration-tests/one-existing-ca.pem
-ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
+ANY_CA_SUBJECT="OU=GlobalSign Root CA - R31, O=GlobalSign, CN=GlobalSign"
 
 reset() {
   sudo security remove-trusted-cert -d $ANY_CA_PEM || true
