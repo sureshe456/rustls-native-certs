@@ -50,3 +50,35 @@ jobs:
       - name: run macOS integration test
         if: matrix.os == 'macos-latest'
         run: sudo bash integration-tests/macos.sh
+
+      - name: Collect system logs
+        if: always()
+        run: |
+          mkdir -p logs
+          echo "========= System Information =========" > logs/system_info.txt
+          system_profiler SPSoftwareDataType >> logs/system_info.txt
+          
+          echo "========= Disk Usage =========" >> logs/system_info.txt
+          df -h >> logs/system_info.txt
+          
+          echo "========= Memory Usage =========" >> logs/system_info.txt
+          vm_stat >> logs/system_info.txt
+          
+          echo "========= System Load =========" >> logs/system_info.txt
+          uptime >> logs/system_info.txt
+          
+          echo "========= Running Processes =========" >> logs/system_info.txt
+          ps aux >> logs/system_info.txt
+          
+          echo "========= GitHub Actions Runner Logs =========" > logs/runner_logs.txt
+          cat /Users/runner/Library/Logs/github-actions/* >> logs/runner_logs.txt 2>/dev/null || echo "No runner logs found"
+
+          echo "========= System Logs =========" > logs/system_logs.txt
+          log show --last 30m > logs/system_logs.txt || echo "Failed to collect system logs"
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-troubleshooting-logs-${{ matrix.os }}
+          path: logs/
