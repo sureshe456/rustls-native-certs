@@ -16,10 +16,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Add PEM certificate to trust store
+      - name: Add PEM certificate to trust store 
         run: |
           sudo security authorizationdb write com.apple.trust-settings.admin allow
-          sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ./one-existing-ca.pem
+          sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain integration-tests/one-existing-ca.pem
           echo "Certificate added to trust store."
           
       - name: Check the certificate's presence and trust status
@@ -28,7 +28,7 @@ jobs:
       
       - name: Manually try the removing trust certificate.
         run: |
-          CERT_HASH=$(openssl x509 -in ./one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
+          CERT_HASH=$(openssl x509 -in integration-tests/one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
           sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain
       - name: Check the certificate's presence and trust status
         run: |
