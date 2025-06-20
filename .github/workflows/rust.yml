@@ -1,84 +1,35 @@
-name: rustls
-
-permissions:
-  contents: read
-
+name: myrustls
 on:
-  push:
-    branches: ['main', 'ci/*']
-  pull_request:
-  merge_group:
-  #schedule:
-    #- cron: '0 18 * * *'
-  workflow_dispatch:
+  workflow_dispatch:  
 
 jobs:
-  build:
-    name: Build+test
+  test-with-cert:
+    #runs-on: macos-14
     runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     strategy:
       fail-fast: false
       matrix:
-        # test a bunch of toolchains on ubuntu
-        rust:
-          - stable
-          #- beta
-          #- nightly
-        #os: [ubuntu-latest]
-        # but only stable on macos/windows (slower platforms)
-        include:
-          - os: macos-latest
-            rust: stable
-          #- os: windows-latest
-            #rust: stable
+        os: [ macos-13, macos-14 ]
+
     steps:
-      - name: Checkout sources
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false
 
-      #- name: Install ${{ matrix.rust }} toolchain
-        #uses: dtolnay/rust-toolchain@master
-        #with:
-          #toolchain: ${{ matrix.rust }}
-
-      #- name: Install NASM for aws-lc-rs on Windows
-        #if: runner.os == 'Windows'
-        #uses: ilammy/setup-nasm@v1
-
-      - name: run macOS integration test
-        if: matrix.os == 'macos-latest'
-        run: sudo bash integration-tests/macos.sh
-
-      - name: Collect system logs
-        if: always()
+      - name: Add PEM certificate to trust store
         run: |
-          mkdir -p logs
-          echo "========= System Information =========" > logs/system_info.txt
-          system_profiler SPSoftwareDataType >> logs/system_info.txt
+          sudo security authorizationdb write com.apple.trust-settings.admin allow
+          sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ./one-existing-ca.pem
+          echo "Certificate added to trust store."
           
-          echo "========= Disk Usage =========" >> logs/system_info.txt
-          df -h >> logs/system_info.txt
-          
-          echo "========= Memory Usage =========" >> logs/system_info.txt
-          vm_stat >> logs/system_info.txt
-          
-          echo "========= System Load =========" >> logs/system_info.txt
-          uptime >> logs/system_info.txt
-          
-          echo "========= Running Processes =========" >> logs/system_info.txt
-          ps aux >> logs/system_info.txt
-          
-          echo "========= GitHub Actions Runner Logs =========" > logs/runner_logs.txt
-          cat /Users/runner/Library/Logs/github-actions/* >> logs/runner_logs.txt 2>/dev/null || echo "No runner logs found"
-
-          echo "========= System Logs =========" > logs/system_logs.txt
-          log show --last 30m > logs/system_logs.txt || echo "Failed to collect system logs"
-
-      - name: Upload logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: macos-troubleshooting-logs-${{ matrix.os }}
-          path: logs/
+      - name: Check the certificate's presence and trust status
+        run: |
+          security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
+      
+      - name: Manually try the removing trust certificate.
+        run: |
+          CERT_HASH=$(openssl x509 -in ./one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
+          sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain
+      - name: Check the certificate's presence and trust status
+        run: |
+          security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
