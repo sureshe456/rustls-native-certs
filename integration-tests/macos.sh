@@ -8,7 +8,7 @@ ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
 reset() {
   #sudo security remove-trusted-cert -d $ANY_CA_PEM || true
   CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
-  sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain
+  sudo security delete-certificate -Z 2CC6581C672A56552B5080963BCD53E2012194A3 /Library/Keychains/System.keychain
   list | grep "$ANY_CA_SUBJECT"
 } 
 
