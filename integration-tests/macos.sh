@@ -42,7 +42,8 @@ sudo security authorizationdb write com.apple.trust-settings.admin allow
 
 #security find-certificate -a -c "GlobalSign"
 #sudo security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
-sudo security find-certificate -Z D69B561148F01C77C54578C10926DF5B856976AD /Library/Keychains/System.keychain
+#sudo security find-certificate -Z D69B561148F01C77C54578C10926DF5B856976AD /Library/Keychains/System.keychain
+sudo security find-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain
 
 reset
 test_distrust_existing_root
