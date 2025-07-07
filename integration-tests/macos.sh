@@ -43,6 +43,7 @@ sudo security authorizationdb write com.apple.trust-settings.admin allow
 #security find-certificate -a -c "GlobalSign"
 #sudo security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
 #sudo security find-certificate -Z D69B561148F01C77C54578C10926DF5B856976AD /Library/Keychains/System.keychain
+CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
 sudo security find-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain
 
 reset
