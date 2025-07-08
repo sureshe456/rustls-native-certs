@@ -4,27 +4,15 @@ permissions:
   contents: write
 
 on:
-  #push:
-    #branches: ['main', 'ci/*']
-  #pull_request:
-  #merge_group:
-  #schedule:
-    #- cron: '0 18 * * *'
   workflow_dispatch:
 jobs:
   build:
     name: Build+test
-    #runs-on: ${{ matrix.os }}
     timeout-minutes: 5
     strategy:
       fail-fast: false
       matrix:
         os: ['macos-13-xlarge', 'macos-14','macos-15']
-        #rust:
-          #- stable
-        #include:
-          #- os: macos-latest
-            #rust: stable
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout sources
