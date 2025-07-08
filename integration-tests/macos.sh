@@ -32,9 +32,7 @@ assert_exists() {
 
 test_distrust_existing_root() {
   assert_exists "$ANY_CA_SUBJECT"
-  #sudo security add-trusted-cert -d -r deny $ANY_CA_PEM
-  sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain $ANY_CA_PEM
-
+  sudo security add-trusted-cert -d -r deny $ANY_CA_PEM   # this line is correct
   assert_missing "$ANY_CA_SUBJECT"
   reset
 }
@@ -43,7 +41,7 @@ test_distrust_existing_root() {
 sudo security authorizationdb write com.apple.trust-settings.admin allow
 
 #security find-certificate -a -c "GlobalSign"
-sudo security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
+#sudo security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
 #sudo security find-certificate -Z D69B561148F01C77C54578C10926DF5B856976AD /Library/Keychains/System.keychain
 #CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
 #sudo security find-certificate -Z 2CC6581C672A56552B5080963BCD53E2012194A3 /Library/Keychains/System.keychain
