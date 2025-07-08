@@ -24,7 +24,7 @@ jobs:
             exit 1
           fi
           echo "PEM file found:"
-          cat ./one-existing-ca.pem
+          cat integration-tests/one-existing-ca.pem
       - name: Add PEM certificate to trust store
         run: |
           #sudo security add-trusted-cert -d ./one-existing-ca.pem || true # Add it, ignore if already there
