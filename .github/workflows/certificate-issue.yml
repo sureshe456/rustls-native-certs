@@ -1,0 +1,55 @@
+name: certificate-issue
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build+test
+    timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['macos-13-xlarge','macos-14','macos-15']
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify PEM file exists
+        run: |
+          if [ ! -f "integration-tests/one-existing-ca.pem" ]; then
+            echo "PEM file not found!"
+            exit 1
+          fi
+          echo "PEM file found:"
+          cat ./one-existing-ca.pem
+      - name: Add PEM certificate to trust store
+        run: |
+          #sudo security add-trusted-cert -d ./one-existing-ca.pem || true # Add it, ignore if already there
+          sudo security authorizationdb write com.apple.trust-settings.admin allow
+          sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain integration-tests/one-existing-ca.pem
+          echo "Certificate added to trust store."
+          
+      - name: Check the certificate's presence and trust status
+        run: |
+          #security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
+          #security find-certificate -a -p | openssl x509 -noout -subject -fingerprint -sha1 | grep "OU=GlobalSign Root CA - R31"
+          CERT_HASH=$(openssl x509 -in integration-tests/one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
+          sudo security find-certificate -Z $CERT_HASH /Library/Keychains/System.keychain
+
+      - name: Print all cert hashes in System keychain
+        run: |
+          sudo security find-certificate -a -Z /Library/Keychains/System.keychain
+
+
+      #- name: Manually try the removing trust certificate.
+        #run: |
+          # sudo security remove-trusted-cert -d -k /Library/Keychains/System.keychain ./one-existing-ca.pem
+          #CERT_HASH=$(openssl x509 -in ./one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
+          #sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain
+      #- name: Check the certificate's presence and trust status
+        #run: |
+          #security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
+          #security find-certificate -a -p | openssl x509 -noout -subject -fingerprint -sha1 | grep "OU=GlobalSign Root CA - R31"
