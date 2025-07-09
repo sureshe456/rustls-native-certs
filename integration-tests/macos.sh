@@ -23,9 +23,11 @@ reset() {
   SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
   echo "Attempting to delete cert with subject: $SUBJECT"
   
-  # Find SHA-1 hash by subject
-  CERT_HASH=$(sudo security find-certificate -c "GlobalSign Root CA - R3" -Z /Library/Keychains/System.keychain | \
-    grep "SHA-1 hash:" | awk '{print $3}')
+  # Find SHA-1 hash by subject SHA-1 hash
+  #CERT_HASH=$(sudo security find-certificate -c "GlobalSign Root CA - R3" -Z /Library/Keychains/System.keychain | \
+    #grep "SHA-1 hash:" | awk '{print $3}')
+  CERT_HASH=$(openssl x509 -in integration-tests/one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d :)
+
 
   if [ -z "$CERT_HASH" ]; then
     echo "No matching certificate found to delete"
