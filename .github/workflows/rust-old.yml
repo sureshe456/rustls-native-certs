@@ -36,6 +36,12 @@ jobs:
       - name: run macOS integration test
         run: sudo bash integration-tests/macos.sh
 
+      - name: After inspect all certificates manually
+        run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain
+
+      - name: After Print All Hashes to Debug
+        run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "SHA-1 hash:"
+
       - name: Collect system logs
         if: always()
         run: |
