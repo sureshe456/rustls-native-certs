@@ -46,9 +46,6 @@ test_distrust_existing_root() {
 # https://developer.apple.com/forums/thread/671582?answerId=693632022#693632022
 sudo security authorizationdb write com.apple.trust-settings.admin allow
 
-openssl x509 -in integration-tests/one-existing-ca.pem -noout -subject -fingerprint -sha1
-
-
 reset
 test_distrust_existing_root
 printf "\n*** All tests passed ***\n"
