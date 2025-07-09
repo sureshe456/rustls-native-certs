@@ -20,15 +20,15 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: run macOS integration test
-        #if: matrix.os == 'macos-latest'
-        run: sudo bash integration-tests/macos.sh
-
       - name: inspect all certificates manually
         run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain
 
       - name: Print All Hashes to Debug
         run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "SHA-1 hash:"
+
+      - name: run macOS integration test
+        #if: matrix.os == 'macos-latest'
+        run: sudo bash integration-tests/macos.sh
 
       - name: Collect system logs
         if: always()
