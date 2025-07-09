@@ -4,7 +4,7 @@ set -ex
 
 ANY_CA_PEM=integration-tests/one-existing-ca.pem
 ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
-sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "$CERT_HASH"
+sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep D69B5611
 
 
 reset() {
