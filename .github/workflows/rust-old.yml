@@ -20,12 +20,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Add PEM certificate to trust store
-        run: |
+      #- name: Add PEM certificate to trust store
+        #run: |
           #sudo security add-trusted-cert -d ./one-existing-ca.pem || true # Add it, ignore if already there
-          sudo security authorizationdb write com.apple.trust-settings.admin allow
-          sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain integration-tests/one-existing-ca.pem
-          echo "Certificate added to trust store."
+          #sudo security authorizationdb write com.apple.trust-settings.admin allow
+          #sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain integration-tests/one-existing-ca.pem
+          #echo "Certificate added to trust store."
 
       - name: inspect all certificates manually
         run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain
