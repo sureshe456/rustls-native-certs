@@ -3,13 +3,17 @@
 set -ex
 
 ANY_CA_PEM=integration-tests/one-existing-ca.pem
-#ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
-ANY_CA_SUBJECT="OU=GLOBALSIGN ROOT CA - R31, O=GlobalSign, CN=GlobalSign"
+ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
+
 
 reset() {
   #sudo security remove-trusted-cert -d $ANY_CA_PEM || true GLOBALSIGN ROOT CA - R31
-  #CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
-  CERT_HASH=$(sudo security find-certificate -c "GLOBALSIGN ROOT CA - R31" -Z /Library/Keychains/System.keychain | grep 'SHA-1 hash:' | awk '{print $3}')
+  #CERT_HASH=$(sudo security find-certificate -c $ANY_CA_PEM -Z /Library/Keychains/System.keychain | grep 'SHA-1 hash:' | awk '{print $3}')
+  CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
+  if [ -z "$CERT_HASH" ]; then
+    echo "Error: Could not compute certificate hash"
+    exit 1
+  fi
   echo "Attempting to delete cert with hash: $CERT_HASH"
   sudo security find-certificate -Z $CERT_HASH /Library/Keychains/System.keychain || echo "Cert not found"
   sudo security delete-certificate -Z $CERT_HASH /Library/Keychains/System.keychain || echo "Delete failed"
@@ -42,11 +46,8 @@ test_distrust_existing_root() {
 # https://developer.apple.com/forums/thread/671582?answerId=693632022#693632022
 sudo security authorizationdb write com.apple.trust-settings.admin allow
 
-#security find-certificate -a -c "GlobalSign"
-#sudo security find-certificate -a -c "GlobalSign" /Library/Keychains/System.keychain || echo "Not found"
-#sudo security find-certificate -Z D69B561148F01C77C54578C10926DF5B856976AD /Library/Keychains/System.keychain
-#CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
-#sudo security find-certificate -Z 2CC6581C672A56552B5080963BCD53E2012194A3 /Library/Keychains/System.keychain
+openssl x509 -in integration-tests/one-existing-ca.pem -noout -subject -fingerprint -sha1
+
 
 reset
 test_distrust_existing_root
