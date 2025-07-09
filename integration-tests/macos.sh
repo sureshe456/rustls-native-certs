@@ -34,6 +34,7 @@ reset() {
 
   echo "Deleting certificate with hash: $CERT_HASH"
   sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain || echo "Delete failed"
+  list | grep "$ANY_CA_SUBJECT"
 }
 
 
