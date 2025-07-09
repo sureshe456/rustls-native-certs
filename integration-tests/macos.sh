@@ -4,12 +4,11 @@ set -ex
 
 ANY_CA_PEM=integration-tests/one-existing-ca.pem
 ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
+sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "$CERT_HASH"
 
 
 reset() {
   CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
-  sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "$CERT_HASH"
-  
   echo "Attempting to delete cert with hash: $CERT_HASH"
   if ! sudo security find-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain > /dev/null 2>&1; then
     echo "Certificate with hash $CERT_HASH not found in System keychain, skipping delete."
