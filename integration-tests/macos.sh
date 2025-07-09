@@ -7,16 +7,16 @@ ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
 
 
 reset() {
-  #sudo security remove-trusted-cert -d $ANY_CA_PEM || true GLOBALSIGN ROOT CA - R31
-  #CERT_HASH=$(sudo security find-certificate -c $ANY_CA_PEM -Z /Library/Keychains/System.keychain | grep 'SHA-1 hash:' | awk '{print $3}')
   CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d ':')
-  if [ -z "$CERT_HASH" ]; then
-    echo "Error: Could not compute certificate hash"
-    exit 1
-  fi
+  sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "$CERT_HASH"
+  
   echo "Attempting to delete cert with hash: $CERT_HASH"
-  sudo security find-certificate -Z $CERT_HASH /Library/Keychains/System.keychain || echo "Cert not found"
-  sudo security delete-certificate -Z $CERT_HASH /Library/Keychains/System.keychain || echo "Delete failed"
+  if ! sudo security find-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain > /dev/null 2>&1; then
+    echo "Certificate with hash $CERT_HASH not found in System keychain, skipping delete."
+  else
+    sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain || echo "Delete failed"
+  fi
+
   list | grep "$ANY_CA_SUBJECT"
 }
 
