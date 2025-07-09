@@ -3,7 +3,7 @@
 set -ex
 
 ANY_CA_PEM=integration-tests/one-existing-ca.pem
-ANY_CA_SUBJECT="OU=GlobalSign Root CA - R31, O=GlobalSign, CN=GlobalSign"
+ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
 
 
 
@@ -20,11 +20,11 @@ ANY_CA_SUBJECT="OU=GlobalSign Root CA - R31, O=GlobalSign, CN=GlobalSign"
 #}
 
 reset() {
-  SUBJECT="OU=GlobalSign Root CA - R31, O=GlobalSign, CN=GlobalSign"
+  SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
   echo "Attempting to delete cert with subject: $SUBJECT"
   
   # Find SHA-1 hash by subject
-  CERT_HASH=$(sudo security find-certificate -c "GlobalSign Root CA - R31" -Z /Library/Keychains/System.keychain | \
+  CERT_HASH=$(sudo security find-certificate -c "GlobalSign Root CA - R3" -Z /Library/Keychains/System.keychain | \
     grep "SHA-1 hash:" | awk '{print $3}')
 
   if [ -z "$CERT_HASH" ]; then
