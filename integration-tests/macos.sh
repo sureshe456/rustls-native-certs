@@ -20,24 +20,32 @@ ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
 #}
 
 reset() {
+  #security remove-trusted-cert -d $ANY_CA_PEM || true
+  security remove-trusted-cert -d /Library/Keychains/System.keychain -c $ANY_CA_PEM
+  list | grep "$ANY_CA_SUBJECT"
+}
+
+
+#reset() {
   #SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
   #echo "Attempting to delete cert with subject: $SUBJECT"
   
   # Find SHA-1 hash by subject SHA-1 hash
   #CERT_HASH=$(sudo security find-certificate -c "GlobalSign Root CA - R3" -Z /Library/Keychains/System.keychain | \
     #grep "SHA-1 hash:" | awk '{print $3}')
-  CERT_HASH=$(openssl x509 -in integration-tests/one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d :)
-  if [ -z "$CERT_HASH" ]; then
-    echo "No matching certificate found to delete"
-    return
-  fi
+  
+  #CERT_HASH=$(openssl x509 -in integration-tests/one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d :)
+  #if [ -z "$CERT_HASH" ]; then
+    #echo "No matching certificate found to delete"
+    #return
+  #fi
 
-  echo "Deleting certificate with hash: $CERT_HASH"
-  sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain || echo "Delete failed"
+  #echo "Deleting certificate with hash: $CERT_HASH"
+  #sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain || echo "Delete failed"
   #list | grep "$ANY_CA_SUBJECT"
-  list | grep "$ANY_CA_SUBJECT" || true
+  #list | grep "$ANY_CA_SUBJECT" || true
 
-}
+#}
 
 
 list() {
