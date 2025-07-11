@@ -20,11 +20,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Add PEM certificate to trust store
-        run: |
+      #- name: Add PEM certificate to trust store
+        #run: |
           #sudo security add-trusted-cert -d ./one-existing-ca.pem || true # Add it, ignore if already there
-          sudo security authorizationdb write com.apple.trust-settings.admin allow
-          sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain integration-tests/one-existing-ca.pem
+          #sudo security authorizationdb write com.apple.trust-settings.admin allow
+          #sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain integration-tests/one-existing-ca.pem
           #echo "Certificate added to trust store."
 
       - name: inspect all certificates manually
@@ -34,13 +34,13 @@ jobs:
         run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "SHA-1 hash:"
 
       - name: run macOS integration test
-        run: sudo bash integration-tests/macos.sh
+        run: bash integration-tests/macos.sh
 
-      - name: After inspect all certificates manually
-        run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain
+      #- name: After inspect all certificates manually
+        #run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain
 
-      - name: After Print All Hashes to Debug
-        run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "SHA-1 hash:"
+     # - name: After Print All Hashes to Debug
+        #run: sudo security find-certificate -a -Z /Library/Keychains/System.keychain | grep "SHA-1 hash:"
 
       - name: Collect system logs
         if: always()
