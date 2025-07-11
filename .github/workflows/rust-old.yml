@@ -12,7 +12,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['macos-13-xlarge', 'macos-14','macos-15']
+        #os: ['macos-13-xlarge', 'macos-14','macos-15']
+        os: ['macos-14']
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout sources
