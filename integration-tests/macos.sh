@@ -21,7 +21,8 @@ ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
 
 reset() {
   #security remove-trusted-cert -d $ANY_CA_PEM || true
-  security remove-trusted-cert -d /Library/Keychains/System.keychain -c $ANY_CA_PEM
+  #security remove-trusted-cert -d /Library/Keychains/System.keychain -c $ANY_CA_PEM
+  sudo security remove-trusted-cert -d integration-tests/one-existing-ca.pem
   list | grep "$ANY_CA_SUBJECT"
 }
 
