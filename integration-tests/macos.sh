@@ -31,13 +31,14 @@ reset() {
     #grep "SHA-1 hash:" | awk '{print $3}')
   
   CERT_HASH=$(openssl x509 -in integration-tests/one-existing-ca.pem -noout -fingerprint -sha1 | cut -d= -f2 | tr -d :)
-  if [ -z "$CERT_HASH" ]; then
-    echo "No matching certificate found to delete"
-    return
-  fi
+  #if [ -z "$CERT_HASH" ]; then
+    #echo "No matching certificate found to delete"
+    #return
+  #fi
 
-  echo "Deleting certificate with hash: $CERT_HASH"
-  sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain || echo "Delete failed"
+  #echo "Deleting certificate with hash: $CERT_HASH"
+  #sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain || echo "Delete failed"
+  sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain
   #list | grep "$ANY_CA_SUBJECT"
   list | grep "$ANY_CA_SUBJECT" || true
 
