@@ -7,7 +7,7 @@ ANY_CA_SUBJECT="OU=GlobalSign Root CA - R3, O=GlobalSign, CN=GlobalSign"
 
 reset() { 
   CERT_HASH=$(openssl x509 -in $ANY_CA_PEM -noout -fingerprint -sha1 | cut -d= -f2 | tr -d :)
-  sudo security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain || true
+  security delete-certificate -Z "$CERT_HASH" /Library/Keychains/System.keychain || true
   list | grep "$ANY_CA_SUBJECT" || true
 }
 
@@ -29,12 +29,12 @@ assert_exists() {
 
 test_distrust_existing_root() {
   assert_exists "$ANY_CA_SUBJECT"
-  sudo security add-trusted-cert -d -r deny $ANY_CA_PEM
+  security add-trusted-cert -d -r deny $ANY_CA_PEM
   assert_missing "$ANY_CA_SUBJECT"
   reset
 }
 
-sudo security authorizationdb write com.apple.trust-settings.admin allow
+security authorizationdb write com.apple.trust-settings.admin allow
 
 reset
 test_distrust_existing_root
